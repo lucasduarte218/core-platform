@@ -1,0 +1,6 @@
+@CorePlatform.Api_HostAddress = http://localhost:5147
+
+GET {{CorePlatform.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
