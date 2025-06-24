@@ -1,11 +1,9 @@
 using CorePlatform.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using CorePlatform.Domain.Shared;
 
-namespace CorePlatform.Domain.Interfaces.UseCases
+namespace CorePlatform.Domain.Interfaces.UseCases;
+
+public interface IListPatientsUseCase
 {
-    public interface IListPatientsUseCase
-    {
-        Task<IEnumerable<Patient>> ExecuteAsync(string? name, string? cpf, bool? isActive);
-    }
+    Task<Result<IEnumerable<Patient>>> ExecuteAsync(string? name, string? cpf, bool? isActive);
 }

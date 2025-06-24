@@ -1,10 +1,9 @@
 using CorePlatform.Domain.Entities;
-using System.Threading.Tasks;
+using CorePlatform.Domain.Shared;
 
-namespace CorePlatform.Domain.Interfaces.UseCases
+namespace CorePlatform.Domain.Interfaces.UseCases;
+
+public interface IUpdatePatientUseCase
 {
-    public interface IUpdatePatientUseCase
-    {
-        Task ExecuteAsync(Patient patient);
-    }
+    Task<Result> ExecuteAsync(Patient patient);
 }

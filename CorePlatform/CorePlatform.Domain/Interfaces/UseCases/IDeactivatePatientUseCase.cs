@@ -1,10 +1,8 @@
-using System;
-using System.Threading.Tasks;
+using CorePlatform.Domain.Shared;
 
-namespace CorePlatform.Domain.Interfaces.UseCases
+namespace CorePlatform.Domain.Interfaces.UseCases;
+
+public interface IDeactivatePatientUseCase
 {
-    public interface IDeactivatePatientUseCase
-    {
-        Task ExecuteAsync(Guid patientId);
-    }
+    Task<Result> ExecuteAsync(Guid patientId);
 }

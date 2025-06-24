@@ -1,3 +1,4 @@
+using CorePlatform.Crosscutting;
 
 namespace CorePlatform.Api
 {
@@ -14,6 +15,10 @@ namespace CorePlatform.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Adiciona IoC
+            builder.Services.AddIocApplication();
+            builder.Services.AddIocInfrastructure();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -27,6 +32,7 @@ namespace CorePlatform.Api
 
             app.UseAuthorization();
 
+            app.UseCustomMiddlewares();
 
             app.MapControllers();
 

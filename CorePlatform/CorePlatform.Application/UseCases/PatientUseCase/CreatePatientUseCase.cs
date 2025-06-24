@@ -1,6 +1,7 @@
 using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Interfaces.UseCases;
+using CorePlatform.Domain.Shared;
 
 namespace CorePlatform.Application.UseCases.PatientUseCase
 {
@@ -13,14 +14,14 @@ namespace CorePlatform.Application.UseCases.PatientUseCase
             _repository = repository;
         }
 
-        public async Task<Patient> ExecuteAsync(Patient patient)
+        public async Task<Result<Patient>> ExecuteAsync(Patient patient)
         {
             var existing = await _repository.GetByCpfAsync(patient.CPF);
             if (existing != null)
-                throw new Exception("CPF já cadastrado.");
+                return Result<Patient>.Failure("CPF já cadastrado.");
 
             await _repository.AddAsync(patient);
-            return patient;
+            return Result<Patient>.Success(patient);
         }
     }
 }

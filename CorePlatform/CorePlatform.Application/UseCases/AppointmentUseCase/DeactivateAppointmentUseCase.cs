@@ -1,23 +1,26 @@
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Interfaces.UseCases;
+using CorePlatform.Domain.Shared;
 
-namespace CorePlatform.Application.UseCases.AppointmentUseCase
+namespace CorePlatform.Application.UseCases.AppointmentUseCase;
+
+public class DeactivateAppointmentUseCase : IDeactivateAppointmentUseCase
 {
-    public class DeactivateAppointmentUseCase : IDeactivateAppointmentUseCase
+    private readonly IAppointmentRepository _repository;
+
+    public DeactivateAppointmentUseCase(IAppointmentRepository repository)
     {
-        private readonly IAppointmentRepository _repository;
+        _repository = repository;
+    }
 
-        public DeactivateAppointmentUseCase(IAppointmentRepository repository)
-        {
-            _repository = repository;
-        }
+    public async Task<Result> ExecuteAsync(Guid appointmentId)
+    {
+        var appointment = await _repository.GetByIdAsync(appointmentId);
+        if (appointment == null)
+            return Result.Failure("Atendimento não encontrado.");
 
-        public async Task ExecuteAsync(Guid appointmentId)
-        {
-            var appointment = await _repository.GetByIdAsync(appointmentId);
-            if (appointment == null) throw new Exception("Atendimento não encontrado.");
-            appointment.IsActive = false;
-            await _repository.UpdateAsync(appointment);
-        }
+        appointment.IsActive = false;
+        await _repository.UpdateAsync(appointment);
+        return Result.Success();
     }
 }
