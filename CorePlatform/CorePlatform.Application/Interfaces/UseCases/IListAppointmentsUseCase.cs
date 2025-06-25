@@ -5,5 +5,5 @@ namespace CorePlatform.Application.Interfaces.UseCases;
 
 public interface IListAppointmentsUseCase
 {
-    Task<Result<IEnumerable<Appointment>>> ExecuteAsync(DateTime? start, DateTime? end, Guid? patientId, bool? isActive);
+    Task<Result<IEnumerable<Appointment>>> ExecuteAsync(DateTime? start, DateTime? end, string? patientCpf, bool? isActive);
 }

@@ -1,23 +1,35 @@
+using CorePlatform.Application.DTOs;
 using CorePlatform.Application.Interfaces.UseCases;
 using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Shared;
+using Mapster;
 
 namespace CorePlatform.Application.UseCases.AppointmentUseCase
 {
     public class CreateAppointmentUseCase : ICreateAppointmentUseCase
     {
         private readonly IAppointmentRepository _repository;
+        private readonly IPatientRepository _patientRepository;
 
-        public CreateAppointmentUseCase(IAppointmentRepository repository)
+        public CreateAppointmentUseCase(IAppointmentRepository repository, IPatientRepository patientRepository)
         {
             _repository = repository;
+            _patientRepository = patientRepository;
         }
 
-        public async Task<Result<Appointment>> ExecuteAsync(Appointment appointment)
+        public async Task<Result<Appointment>> ExecuteAsync(CreateAppointmentDto dto)
         {
-            if (appointment.DateTime > DateTime.Now)
+            var patient = await _patientRepository.GetByCpfAsync(dto.PatientCpf);
+
+            if (patient == null)
+                return Result<Appointment>.Failure("Paciente não encontrado.");
+
+            if (dto.DateTime > DateTime.Now)
                 return Result<Appointment>.Failure("Data e hora não podem ser futuras.");
+
+            var appointment = dto.Adapt<Appointment>();
+            appointment.Patient = patient;
 
             await _repository.AddAsync(appointment);
             return Result<Appointment>.Success(appointment);

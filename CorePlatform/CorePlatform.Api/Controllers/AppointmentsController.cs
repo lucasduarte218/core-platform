@@ -1,9 +1,9 @@
-﻿using CorePlatform.Application.Interfaces.UseCases;
-using CorePlatform.Domain.Entities;
-using CorePlatform.Domain.Shared;
+﻿using CorePlatform.Api.Requests;
+using CorePlatform.Api.Responses;
+using CorePlatform.Application.DTOs;
+using CorePlatform.Application.Interfaces.UseCases;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace CorePlatform.Api.Controllers
 {
@@ -28,34 +28,45 @@ namespace CorePlatform.Api.Controllers
             _deactivateAppointment = deactivateAppointment;
         }
 
-        // GET: api/appointments?start=...&end=...&patientId=...&isActive=...
+        // GET: api/appointments?start=...&end=...&patientCpf=...&isActive=...
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] DateTime? start, [FromQuery] DateTime? end, [FromQuery] Guid? patientId, [FromQuery] bool? isActive)
+        public async Task<IActionResult> Get([FromQuery] DateTime? start, [FromQuery] DateTime? end, [FromQuery] string? patientCpf, [FromQuery] bool? isActive)
         {
-            var result = await _listAppointments.ExecuteAsync(start, end, patientId, isActive);
+            var result = await _listAppointments.ExecuteAsync(start, end, patientCpf, isActive);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
-            return Ok(result.Value);
+            // Map IEnumerable<Appointment> to IEnumerable<AppointmentResponse>
+            var response = result.Value!.Adapt<IEnumerable<AppointmentResponse>>();
+            return Ok(response);
         }
 
         // POST: api/appointments
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Appointment appointment)
+        public async Task<IActionResult> Post([FromBody] CreateAppointmentRequest request)
         {
-            var result = await _createAppointment.ExecuteAsync(appointment);
+            var dto = request.Adapt<CreateAppointmentDto>();
+
+            var result = await _createAppointment.ExecuteAsync(dto);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
-            return CreatedAtAction(nameof(Get), new { id = result.Value!.Id }, result.Value);
+            var response = result.Value!.Adapt<AppointmentResponse>();
+            return Created(string.Empty, response);
         }
 
         // PUT: api/appointments/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] Appointment appointment)
+        public async Task<IActionResult> Put(Guid id, [FromBody] UpdateAppointmentRequest request)
         {
-            if (id != appointment.Id) return BadRequest();
-            var result = await _updateAppointment.ExecuteAsync(appointment);
+            if (id != request.Id) return BadRequest();
+
+            var dto = request.Adapt<UpdateAppointmentDto>();
+
+            var result = await _updateAppointment.ExecuteAsync(dto);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -67,6 +78,7 @@ namespace CorePlatform.Api.Controllers
         public async Task<IActionResult> Deactivate(Guid id)
         {
             var result = await _deactivateAppointment.ExecuteAsync(id);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 

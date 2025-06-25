@@ -1,7 +1,9 @@
+using CorePlatform.Application.DTOs;
 using CorePlatform.Application.Interfaces.UseCases;
 using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Shared;
+using Mapster;
 
 namespace CorePlatform.Application.UseCases.AppointmentUseCase;
 
@@ -14,16 +16,30 @@ public class UpdateAppointmentUseCase : IUpdateAppointmentUseCase
         _repository = repository;
     }
 
-    public async Task<Result> ExecuteAsync(Appointment appointment)
+    public async Task<Result> ExecuteAsync(UpdateAppointmentDto dto)
     {
-        var existing = await _repository.GetByIdAsync(appointment.Id);
+        Appointment? existing = await _repository.GetByIdAsync(dto.Id);
         if (existing == null)
             return Result.Failure("Atendimento não encontrado.");
 
-        if (appointment.DateTime > DateTime.Now)
+        if (dto.DateTime.HasValue && dto.DateTime.Value > DateTime.Now)
             return Result.Failure("Data e hora não podem ser futuras.");
 
-        await _repository.UpdateAsync(appointment);
+        if (dto.PatientCpf is not null)
+            existing.PatientCpf = dto.PatientCpf;
+
+        if (dto.DateTime.HasValue)
+            existing.DateTime = dto.DateTime.Value;
+
+        if (dto.Description is not null)
+            existing.Description = dto.Description;
+
+        if (dto.IsActive.HasValue)
+            existing.IsActive = dto.IsActive.Value;
+
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateAsync(existing);
         return Result.Success();
     }
 }

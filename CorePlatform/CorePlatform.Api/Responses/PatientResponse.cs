@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace CorePlatform.Domain.Entities
+namespace CorePlatform.Api.Responses
 {
-    public class Patient : BaseEntity
+    public class PatientResponse
     {
-        [Key]
         public string CPF { get; set; } = null!;
         public string Name { get; set; } = null!;
         public DateTime BirthDate { get; set; }
@@ -15,6 +12,5 @@ namespace CorePlatform.Domain.Entities
         public string Address { get; set; } = null!;
         public string? Complement { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
     }
 }

@@ -14,14 +14,10 @@ public class ListAppointmentsUseCase : IListAppointmentsUseCase
         _repository = repository;
     }
 
-    public async Task<Result<IEnumerable<Appointment>>> ExecuteAsync(DateTime? start, DateTime? end, Guid? patientId, bool? isActive)
+    public async Task<Result<IEnumerable<Appointment>>> ExecuteAsync(DateTime? start, DateTime? end, string? patientCpf, bool? isActive)
     {
-        var appointments = await _repository.GetAllAsync();
-        var filtered = appointments
-            .Where(a => (!start.HasValue || a.DateTime >= start.Value)
-                     && (!end.HasValue || a.DateTime <= end.Value)
-                     && (!patientId.HasValue || a.PatientId == patientId.Value)
-                     && (!isActive.HasValue || a.IsActive == isActive.Value));
-        return Result<IEnumerable<Appointment>>.Success(filtered);
+        var appointments = await _repository.GetFilteredAsync(start, end, patientCpf, isActive);
+
+        return Result<IEnumerable<Appointment>>.Success(appointments);
     }
 }

@@ -4,5 +4,5 @@ namespace CorePlatform.Application.Interfaces.UseCases;
 
 public interface IDeactivatePatientUseCase
 {
-    Task<Result> ExecuteAsync(Guid patientId);
+    Task<Result> ExecuteAsync(string cpf);
 }

@@ -16,9 +16,9 @@ public class AppointmentRepository : IAppointmentRepository
     public async Task<Appointment?> GetByIdAsync(Guid id)
         => await _context.Appointments.FindAsync(id);
 
-    public async Task<IEnumerable<Appointment>> GetByPatientIdAsync(Guid patientId)
+    public async Task<IEnumerable<Appointment>> GetByPatientCpfAsync(string patientCpf)
         => await _context.Appointments
-            .Where(a => a.PatientId == patientId)
+            .Where(a => a.PatientCpf == patientCpf)
             .ToListAsync();
 
     public async Task<IEnumerable<Appointment>> GetAllAsync()
@@ -40,6 +40,25 @@ public class AppointmentRepository : IAppointmentRepository
     {
         _context.Appointments.Remove(appointment);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Appointment>> GetFilteredAsync(DateTime? start, DateTime? end, string? patientCpf, bool? isActive)
+    {
+        var query = _context.Appointments.AsQueryable();
+
+        if (start.HasValue)
+            query = query.Where(a => a.DateTime >= start.Value);
+
+        if (end.HasValue)
+            query = query.Where(a => a.DateTime <= end.Value);
+
+        if (!string.IsNullOrEmpty(patientCpf))
+            query = query.Where(a => a.PatientCpf == patientCpf);
+
+        if (isActive.HasValue)
+            query = query.Where(a => a.IsActive == isActive.Value);
+
+        return await query.ToListAsync();
     }
 }
 

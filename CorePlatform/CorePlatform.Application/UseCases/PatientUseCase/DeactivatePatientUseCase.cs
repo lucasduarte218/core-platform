@@ -13,9 +13,9 @@ namespace CorePlatform.Application.UseCases.PatientUseCase
             _repository = repository;
         }
 
-        public async Task<Result> ExecuteAsync(Guid patientId)
+        public async Task<Result> ExecuteAsync(string cpf)
         {
-            var patient = await _repository.GetByIdAsync(patientId);
+            var patient = await _repository.GetByCpfAsync(cpf);
             if (patient == null)
                 return Result.Failure("Paciente não encontrado.");
 

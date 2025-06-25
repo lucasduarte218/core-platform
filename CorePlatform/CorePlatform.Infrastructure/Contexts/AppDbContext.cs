@@ -18,12 +18,42 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Patient>()
-            .HasIndex(p => p.CPF)
-            .IsUnique();
+            .HasKey(p => p.CPF);
 
         modelBuilder.Entity<Appointment>()
             .HasOne(a => a.Patient)
             .WithMany(p => p.Appointments)
-            .HasForeignKey(a => a.PatientId);
+            .HasForeignKey(a => a.PatientCpf)
+            .HasPrincipalKey(p => p.CPF);
+    }
+
+    public override int SaveChanges()
+    {
+        SetAuditFields();
+        return base.SaveChanges();
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        SetAuditFields();
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void SetAuditFields()
+    {
+        var entries = ChangeTracker.Entries<BaseEntity>();
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = DateTime.UtcNow;
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+        }
     }
 }

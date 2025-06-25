@@ -1,9 +1,7 @@
 using CorePlatform.Application.DTOs;
 using CorePlatform.Application.Interfaces.UseCases;
-using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Shared;
-using Mapster;
 
 namespace CorePlatform.Application.UseCases.PatientUseCase
 {
@@ -18,13 +16,40 @@ namespace CorePlatform.Application.UseCases.PatientUseCase
 
         public async Task<Result> ExecuteAsync(UpdatePatientDto patientDto)
         {
-            var existing = await _repository.GetByIdAsync(patientDto.Id);
+            var existing = await _repository.GetByCpfAsync(patientDto.CPF);
+
             if (existing == null)
                 return Result.Failure("Paciente não encontrado.");
 
-            Patient patient = patientDto.Adapt<Patient>();
+            // Atualiza apenas os campos enviados (não nulos)
+            if (patientDto.Name is not null)
+                existing.Name = patientDto.Name;
 
-            await _repository.UpdateAsync(patient);
+            if (patientDto.BirthDate.HasValue)
+                existing.BirthDate = patientDto.BirthDate.Value;
+
+            if (patientDto.Gender is not null)
+                existing.Gender = patientDto.Gender;
+
+            if (patientDto.ZipCode is not null)
+                existing.ZipCode = patientDto.ZipCode;
+
+            if (patientDto.City is not null)
+                existing.City = patientDto.City;
+
+            if (patientDto.District is not null)
+                existing.District = patientDto.District;
+
+            if (patientDto.Address is not null)
+                existing.Address = patientDto.Address;
+
+            if (patientDto.Complement is not null)
+                existing.Complement = patientDto.Complement;
+
+            if (patientDto.IsActive.HasValue)
+                existing.IsActive = patientDto.IsActive.Value;
+
+            await _repository.UpdateAsync(existing);
             return Result.Success();
         }
     }

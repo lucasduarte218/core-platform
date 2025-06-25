@@ -19,6 +19,7 @@ namespace CorePlatform.Application.UseCases.PatientUseCase
         public async Task<Result<Patient>> ExecuteAsync(CreatePatientDto patientDto)
         {
             var existing = await _repository.GetByCpfAsync(patientDto.CPF);
+
             if (existing != null)
                 return Result<Patient>.Failure("CPF já cadastrado.");
 
