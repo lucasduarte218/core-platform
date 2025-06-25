@@ -1,8 +1,8 @@
-﻿using CorePlatform.Application.UseCases.AppointmentUseCase;
+﻿using CorePlatform.Application.Interfaces.UseCases;
+using CorePlatform.Application.UseCases.AppointmentUseCase;
 using CorePlatform.Application.UseCases.PatientUseCase;
 using CorePlatform.Crosscutting.Middlewares;
 using CorePlatform.Domain.Interfaces.Repositories;
-using CorePlatform.Domain.Interfaces.UseCases;
 using CorePlatform.Infrastructure.Contexts;
 using CorePlatform.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;

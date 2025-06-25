@@ -1,5 +1,5 @@
-﻿using CorePlatform.Domain.Entities;
-using CorePlatform.Domain.Interfaces.UseCases;
+﻿using CorePlatform.Application.Interfaces.UseCases;
+using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 using System;

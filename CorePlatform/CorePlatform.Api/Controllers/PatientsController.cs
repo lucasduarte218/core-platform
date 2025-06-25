@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CorePlatform.Domain.Entities;
-using CorePlatform.Domain.Interfaces.UseCases;
-using CorePlatform.Domain.Shared;
-using System;
-using System.Threading.Tasks;
+﻿using CorePlatform.Api.Requests;
+using CorePlatform.Application.DTOs;
+using CorePlatform.Application.Interfaces.UseCases;
+using Mapster;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CorePlatform.Api.Controllers
 {
@@ -41,9 +40,12 @@ namespace CorePlatform.Api.Controllers
 
         // POST: api/patients
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Patient patient)
+        public async Task<IActionResult> Post([FromBody] CreatePatientRequest request)
         {
-            var result = await _createPatient.ExecuteAsync(patient);
+            CreatePatientDto dto = request.Adapt<CreatePatientDto>();
+
+            var result = await _createPatient.ExecuteAsync(dto);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -52,10 +54,11 @@ namespace CorePlatform.Api.Controllers
 
         // PUT: api/patients/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, [FromBody] Patient patient)
+        public async Task<IActionResult> Put(Guid id, [FromBody] UpdatePatientRequest request)
         {
-            if (id != patient.Id) return BadRequest();
-            var result = await _updatePatient.ExecuteAsync(patient);
+            if (id != request.Id) return BadRequest();
+            var dto = request.Adapt<UpdatePatientDto>();
+            var result = await _updatePatient.ExecuteAsync(dto);
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 

@@ -1,5 +1,5 @@
+using CorePlatform.Application.Interfaces.UseCases;
 using CorePlatform.Domain.Interfaces.Repositories;
-using CorePlatform.Domain.Interfaces.UseCases;
 using CorePlatform.Domain.Shared;
 
 namespace CorePlatform.Application.UseCases.AppointmentUseCase;

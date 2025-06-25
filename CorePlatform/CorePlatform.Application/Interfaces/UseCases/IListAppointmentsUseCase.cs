@@ -1,7 +1,7 @@
 using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Shared;
 
-namespace CorePlatform.Domain.Interfaces.UseCases;
+namespace CorePlatform.Application.Interfaces.UseCases;
 
 public interface IListAppointmentsUseCase
 {
