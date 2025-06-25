@@ -3,8 +3,11 @@ using CorePlatform.Application.UseCases.PatientUseCase;
 using CorePlatform.Crosscutting.Middlewares;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Interfaces.UseCases;
+using CorePlatform.Infrastructure.Contexts;
 using CorePlatform.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CorePlatform.Crosscutting
@@ -21,24 +24,29 @@ namespace CorePlatform.Crosscutting
         // Registra UseCases e serviços da camada Application
         public static IServiceCollection AddIocApplication(this IServiceCollection services)
         {
-            // Exemplo:
+            // Patient UseCases
             services.AddScoped<ICreatePatientUseCase, CreatePatientUseCase>();
             services.AddScoped<IUpdatePatientUseCase, UpdatePatientUseCase>();
             services.AddScoped<IListPatientsUseCase, ListPatientsUseCase>();
             services.AddScoped<IDeactivatePatientUseCase, DeactivatePatientUseCase>();
+
+            // Appointment UseCases
             services.AddScoped<ICreateAppointmentUseCase, CreateAppointmentUseCase>();
-            // ...demais use cases
+            services.AddScoped<IUpdateAppointmentUseCase, UpdateAppointmentUseCase>();
+            services.AddScoped<IListAppointmentsUseCase, ListAppointmentsUseCase>();
+            services.AddScoped<IDeactivateAppointmentUseCase, DeactivateAppointmentUseCase>();
 
             return services;
         }
 
-        // Registra repositórios e serviços da camada Infrastructure
-        public static IServiceCollection AddIocInfrastructure(this IServiceCollection services)
+        // Registra repositórios, AppDbContext e serviços da camada Infrastructure
+        public static IServiceCollection AddIocInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            // Exemplo:
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
             services.AddScoped<IPatientRepository, PatientRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-            // ...demais repositórios
 
             return services;
         }

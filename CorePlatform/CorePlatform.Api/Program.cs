@@ -17,7 +17,7 @@ namespace CorePlatform.Api
 
             // Adiciona IoC
             builder.Services.AddIocApplication();
-            builder.Services.AddIocInfrastructure();
+            builder.Services.AddIocInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 
