@@ -15,17 +15,20 @@ namespace CorePlatform.Api.Controllers
         private readonly ICreateAppointmentUseCase _createAppointment;
         private readonly IUpdateAppointmentUseCase _updateAppointment;
         private readonly IDeactivateAppointmentUseCase _deactivateAppointment;
+        private readonly IGetAppointmentDashboardUseCase _getDashboard;
 
         public AppointmentsController(
             IListAppointmentsUseCase listAppointments,
             ICreateAppointmentUseCase createAppointment,
             IUpdateAppointmentUseCase updateAppointment,
-            IDeactivateAppointmentUseCase deactivateAppointment)
+            IDeactivateAppointmentUseCase deactivateAppointment,
+            IGetAppointmentDashboardUseCase getDashboard)
         {
             _listAppointments = listAppointments;
             _createAppointment = createAppointment;
             _updateAppointment = updateAppointment;
             _deactivateAppointment = deactivateAppointment;
+            _getDashboard = getDashboard;
         }
 
         // GET: api/appointments?start=...&end=...&patientCpf=...&isActive=...
@@ -37,7 +40,6 @@ namespace CorePlatform.Api.Controllers
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
-            // Map IEnumerable<Appointment> to IEnumerable<AppointmentResponse>
             var response = result.Value!.Adapt<IEnumerable<AppointmentResponse>>();
             return Ok(response);
         }
@@ -83,6 +85,17 @@ namespace CorePlatform.Api.Controllers
                 return BadRequest(result.Error);
 
             return NoContent();
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboard()
+        {
+            var result = await _getDashboard.ExecuteAsync();
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            var response = result.Value!.Adapt<AppointmentDashboardResponse>();
+            return Ok(response);
         }
     }
 }

@@ -10,5 +10,7 @@ namespace CorePlatform.Domain.Interfaces.Repositories
         Task AddAsync(Patient patient);
         Task UpdateAsync(Patient patient);
         Task DeleteAsync(Patient patient);
+        Task<int> GetTotalCountAsync();
+        Task<int> GetActiveCountAsync();
     }
 }

@@ -2,9 +2,6 @@ using CorePlatform.Application.Interfaces.UseCases;
 using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Shared;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CorePlatform.Application.UseCases.PatientUseCase
 {
@@ -20,6 +17,7 @@ namespace CorePlatform.Application.UseCases.PatientUseCase
         public async Task<Result<IEnumerable<Patient>>> ExecuteAsync(string? name, string? cpf, bool? isActive)
         {
             var patients = await _repository.GetAllAsync();
+
             var filtered = patients
                 .Where(p => (string.IsNullOrEmpty(name) || p.Name.Contains(name))
                          && (string.IsNullOrEmpty(cpf) || p.CPF == cpf)

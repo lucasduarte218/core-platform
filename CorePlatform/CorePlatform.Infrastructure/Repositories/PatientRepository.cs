@@ -40,4 +40,9 @@ public class PatientRepository : IPatientRepository
         _context.Patients.Remove(patient);
         await _context.SaveChangesAsync();
     }
+    public async Task<int> GetTotalCountAsync()
+    => await _context.Patients.CountAsync();
+
+    public async Task<int> GetActiveCountAsync()
+        => await _context.Patients.CountAsync(p => p.IsActive);
 }

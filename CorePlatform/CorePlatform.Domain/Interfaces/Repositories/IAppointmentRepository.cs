@@ -9,5 +9,7 @@ namespace CorePlatform.Domain.Interfaces.Repositories
         Task AddAsync(Appointment appointment);
         Task UpdateAsync(Appointment appointment);
         Task DeleteAsync(Appointment appointment);
+        Task<int> GetTotalCountAsync();
+        Task<int> GetTodayCountAsync();
     }
 }

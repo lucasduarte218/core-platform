@@ -16,17 +16,20 @@ namespace CorePlatform.Api.Controllers
         private readonly ICreatePatientUseCase _createPatient;
         private readonly IUpdatePatientUseCase _updatePatient;
         private readonly IDeactivatePatientUseCase _deactivatePatient;
+        private readonly IGetPatientDashboardUseCase _getDashboard;
 
         public PatientsController(
             IListPatientsUseCase listPatients,
             ICreatePatientUseCase createPatient,
             IUpdatePatientUseCase updatePatient,
-            IDeactivatePatientUseCase deactivatePatient)
+            IDeactivatePatientUseCase deactivatePatient,
+            IGetPatientDashboardUseCase getDashboard)
         {
             _listPatients = listPatients;
             _createPatient = createPatient;
             _updatePatient = updatePatient;
             _deactivatePatient = deactivatePatient;
+            _getDashboard = getDashboard; ;
         }
 
         // GET: api/patients?name=...&cpf=...&isActive=...
@@ -34,10 +37,12 @@ namespace CorePlatform.Api.Controllers
         public async Task<IActionResult> Get([FromQuery] string? name, [FromQuery] string? cpf, [FromQuery] bool? isActive)
         {
             var result = await _listPatients.ExecuteAsync(name, cpf, isActive);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
             var response = result.Value!.Adapt<IEnumerable<PatientResponse>>();
+
             return Ok(response);
         }
 
@@ -46,11 +51,14 @@ namespace CorePlatform.Api.Controllers
         public async Task<IActionResult> Post([FromBody] CreatePatientRequest request)
         {
             var dto = request.Adapt<CreatePatientDto>();
+
             var result = await _createPatient.ExecuteAsync(dto);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
             var response = result.Value!.Adapt<PatientResponse>();
+
             return Created(string.Empty, response);
         }
 
@@ -62,7 +70,9 @@ namespace CorePlatform.Api.Controllers
                 return BadRequest("O CPF da rota e do corpo não coincidem.");
 
             var dto = request.Adapt<UpdatePatientDto>();
+
             var result = await _updatePatient.ExecuteAsync(dto);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
@@ -74,10 +84,25 @@ namespace CorePlatform.Api.Controllers
         public async Task<IActionResult> Deactivate(string cpf)
         {
             var result = await _deactivatePatient.ExecuteAsync(cpf);
+
             if (!result.IsSuccess)
                 return BadRequest(result.Error);
 
             return NoContent();
+        }
+
+        // GET: api/patients/dashboard
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboard()
+        {
+            var result = await _getDashboard.ExecuteAsync();
+
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            var resp = result.Value!.Adapt<PatientDashboardResponse>();
+
+            return Ok(resp);
         }
     }
 }

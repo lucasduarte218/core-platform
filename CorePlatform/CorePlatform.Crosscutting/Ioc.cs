@@ -14,14 +14,12 @@ namespace CorePlatform.Crosscutting
 {
     public static class Ioc
     {
-        // Adiciona middlewares customizados
         public static IApplicationBuilder UseCustomMiddlewares(this IApplicationBuilder app)
         {
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             return app;
         }
 
-        // Registra UseCases e serviços da camada Application
         public static IServiceCollection AddIocApplication(this IServiceCollection services)
         {
             // Patient UseCases
@@ -29,17 +27,19 @@ namespace CorePlatform.Crosscutting
             services.AddScoped<IUpdatePatientUseCase, UpdatePatientUseCase>();
             services.AddScoped<IListPatientsUseCase, ListPatientsUseCase>();
             services.AddScoped<IDeactivatePatientUseCase, DeactivatePatientUseCase>();
+            services.AddScoped<IGetPatientDashboardUseCase, GetPatientDashboardUseCase>();
 
             // Appointment UseCases
             services.AddScoped<ICreateAppointmentUseCase, CreateAppointmentUseCase>();
             services.AddScoped<IUpdateAppointmentUseCase, UpdateAppointmentUseCase>();
             services.AddScoped<IListAppointmentsUseCase, ListAppointmentsUseCase>();
             services.AddScoped<IDeactivateAppointmentUseCase, DeactivateAppointmentUseCase>();
+            services.AddScoped<IGetAppointmentDashboardUseCase, GetAppointmentDashboardUseCase>();
+
 
             return services;
         }
 
-        // Registra repositórios, AppDbContext e serviços da camada Infrastructure
         public static IServiceCollection AddIocInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>

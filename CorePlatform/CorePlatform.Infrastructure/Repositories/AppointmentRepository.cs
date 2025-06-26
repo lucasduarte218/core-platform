@@ -60,5 +60,17 @@ public class AppointmentRepository : IAppointmentRepository
 
         return await query.ToListAsync();
     }
+
+    public async Task<int> GetTotalCountAsync()
+    => await _context.Appointments.CountAsync();
+
+    public async Task<int> GetTodayCountAsync()
+    {
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        return await _context.Appointments
+            .CountAsync(a => a.DateTime >= today && a.DateTime < tomorrow);
+    }
 }
 
