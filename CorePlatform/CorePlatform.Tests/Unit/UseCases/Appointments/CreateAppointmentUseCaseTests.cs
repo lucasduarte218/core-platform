@@ -19,7 +19,7 @@ namespace CorePlatform.Tests.Unit.UseCases.Appointments
 
             var useCase = new CreateAppointmentUseCase(appointmentRepo.Object, patientRepo.Object);
 
-            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.Now };
+            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.UtcNow };
 
             var result = await useCase.ExecuteAsync(dto);
 
@@ -38,7 +38,7 @@ namespace CorePlatform.Tests.Unit.UseCases.Appointments
 
             var useCase = new CreateAppointmentUseCase(appointmentRepo.Object, patientRepo.Object);
 
-            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.Now.AddMinutes(10) };
+            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.UtcNow.AddMinutes(10) };
 
             var result = await useCase.ExecuteAsync(dto);
 
@@ -58,7 +58,7 @@ namespace CorePlatform.Tests.Unit.UseCases.Appointments
 
             var useCase = new CreateAppointmentUseCase(appointmentRepo.Object, patientRepo.Object);
 
-            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.Now.AddMinutes(-10) };
+            var dto = new CreateAppointmentDto { PatientCpf = "123", DateTime = DateTime.UtcNow.AddMinutes(-10) };
 
             var result = await useCase.ExecuteAsync(dto);
 

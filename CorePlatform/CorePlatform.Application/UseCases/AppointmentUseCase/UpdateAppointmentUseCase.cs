@@ -22,14 +22,25 @@ public class UpdateAppointmentUseCase : IUpdateAppointmentUseCase
         if (existing == null)
             return Result.Failure("Atendimento não encontrado.");
 
-        if (dto.DateTime.HasValue && dto.DateTime.Value > DateTime.Now)
-            return Result.Failure("Data e hora não podem ser futuras.");
+        if (dto.DateTime.HasValue)
+        {
+            if (dto.DateTime.Value.Kind == DateTimeKind.Unspecified)
+            {
+                dto.DateTime = TimeZoneInfo.ConvertTimeToUtc(dto.DateTime.Value, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+            }
+            else if (dto.DateTime.Value.Kind == DateTimeKind.Local)
+            {
+                dto.DateTime = dto.DateTime.Value.ToUniversalTime();
+            }
+
+            if (dto.DateTime.HasValue && dto.DateTime.Value > DateTime.UtcNow)
+                return Result.Failure("Data e hora não podem ser futuras.");
+
+            existing.DateTime = dto.DateTime.Value;
+        }
 
         if (dto.PatientCpf is not null)
             existing.PatientCpf = dto.PatientCpf;
-
-        if (dto.DateTime.HasValue)
-            existing.DateTime = dto.DateTime.Value;
 
         if (dto.Description is not null)
             existing.Description = dto.Description;

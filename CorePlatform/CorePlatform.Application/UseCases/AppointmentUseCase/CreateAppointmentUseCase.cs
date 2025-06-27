@@ -4,6 +4,7 @@ using CorePlatform.Domain.Entities;
 using CorePlatform.Domain.Interfaces.Repositories;
 using CorePlatform.Domain.Shared;
 using Mapster;
+using System.Reflection;
 
 namespace CorePlatform.Application.UseCases.AppointmentUseCase
 {
@@ -25,7 +26,16 @@ namespace CorePlatform.Application.UseCases.AppointmentUseCase
             if (patient == null)
                 return Result<Appointment>.Failure("Paciente não encontrado.");
 
-            if (dto.DateTime > DateTime.Now)
+            if (dto.DateTime.Kind == DateTimeKind.Unspecified)
+            {
+                dto.DateTime = TimeZoneInfo.ConvertTimeToUtc(dto.DateTime, TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time"));
+            }
+            else if (dto.DateTime.Kind == DateTimeKind.Local)
+            {
+                dto.DateTime = dto.DateTime.ToUniversalTime();
+            }
+
+            if (dto.DateTime > DateTime.UtcNow)
                 return Result<Appointment>.Failure("Data e hora não podem ser futuras.");
 
             var appointment = dto.Adapt<Appointment>();

@@ -32,7 +32,7 @@ public class UpdateAppointmentUseCaseTests
         repo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(appt);
 
         var useCase = new UpdateAppointmentUseCase(repo.Object);
-        var dto = new UpdateAppointmentDto { Id = Guid.NewGuid(), DateTime = DateTime.Now.AddMinutes(10) };
+        var dto = new UpdateAppointmentDto { Id = Guid.NewGuid(), DateTime = DateTime.UtcNow.AddMinutes(10) };
 
         var result = await useCase.ExecuteAsync(dto);
 
@@ -52,7 +52,7 @@ public class UpdateAppointmentUseCaseTests
         {
             Id = Guid.NewGuid(),
             PatientCpf = "123",
-            DateTime = DateTime.Now.AddMinutes(-5),
+            DateTime = DateTime.UtcNow.AddMinutes(-5),
             Description = "teste",
             IsActive = true
         };

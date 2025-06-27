@@ -16,7 +16,7 @@ namespace CorePlatform.Tests.Integration.Repository
             {
                 Id = Guid.NewGuid(),
                 PatientCpf = "123",
-                DateTime = DateTime.Now,
+                DateTime = DateTime.UtcNow,
                 IsActive = true,
                 Description = "Consulta geral"
             };

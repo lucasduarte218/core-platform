@@ -65,7 +65,7 @@ namespace CorePlatform.Api.Controllers
         {
             if (id != request.Id) return BadRequest();
 
-            var dto = request.Adapt<UpdateAppointmentDto>();
+            UpdateAppointmentDto dto = request.Adapt<UpdateAppointmentDto>();
 
             var result = await _updateAppointment.ExecuteAsync(dto);
 
